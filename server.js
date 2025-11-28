@@ -36,6 +36,14 @@ sequelize.sync().then(() => {
   console.log("All Models Synced Successfully ✔");
 });
 
+// ✔ Add this middleware here
+app.use((req, res, next) => {
+  res.locals.admin = req.user;   // logged-in user globally available
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+});
+
 // Routes
 const adminRoutes = require("./routes/admin");
 const frontendRoutes = require("./routes/frontend");

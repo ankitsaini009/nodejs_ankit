@@ -1,5 +1,8 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const session = require("express-session");
+const flash = require("connect-flash");
+
 module.exports = {
 
   // Render Login Page
@@ -38,5 +41,68 @@ module.exports = {
   dashboard: (req, res) => {
     res.render("admin/index");
   },
+
+  // logout
+  logout: (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log("Session destroy error:", err);
+      }
+      res.redirect("/admin/login");
+    });
+  },
+
+  // Admin profile
+  admin_profile: async (req, res) => {
+    try {
+      const adminId = req.session.user.id;
+
+      const admin = await User.findOne({ where: { id: adminId, role: 'admin' } });
+
+      res.render("admin/admin-profile", { admin });
+
+    } catch (err) {
+      console.log(err);
+      res.send("Error loading profile");
+    }
+  },
+
+  update_profile: async (req, res) => {
+    try {
+      const adminId = req.session.user.id;
+
+      const { name, email, password, confirm_password } = req.body;
+
+      // Password check
+      if (password && password !== confirm_password) {
+        req.flash("error", "Passwords do not match");
+        return res.redirect("/admin/admin-profile");
+      }
+
+      let updateData = {
+        name,
+        email
+      };
+
+      // Password update
+      if (password) {
+        updateData.password = password;
+      }
+
+      // Image Upload handle
+      if (req.file) {
+        updateData.profile_img = req.file.filename;
+      }
+
+      await User.update(updateData, { where: { id: adminId } });
+
+      req.flash("success", "Profile updated successfully");
+      res.redirect("/admin/admin-profile");
+
+    } catch (err) {
+      console.log(err);
+      res.send("Error updating profile");
+    }
+  }
 
 };
