@@ -5,6 +5,9 @@ const flash = require("connect-flash");
 const methodOverride = require("method-override");
 const sequelize = require("./config/db");
 const User = require("./models/User");
+const globalMW = require("./middleware/globally");
+const NamedRouter = require("named-routes");
+const namedRouter = new NamedRouter();
 
 require("dotenv").config();
 const app = express();
@@ -22,6 +25,7 @@ app.use(
   })
 );
 app.use(flash());
+app.use(globalMW);   // 👈 NOW globally available
 
 // View Engine
 app.set("view engine", "ejs");
@@ -38,7 +42,6 @@ sequelize.sync().then(() => {
 
 // ✔ Add this middleware here
 app.use((req, res, next) => {
-  res.locals.admin = req.user;   // logged-in user globally available
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
@@ -50,6 +53,9 @@ const frontendRoutes = require("./routes/frontend");
 
 app.use("/admin", adminRoutes);
 app.use("/", frontendRoutes);
+
+namedRouter.extendExpress(app);
+namedRouter.registerAppHelpers(app);
 
 // Routes Test
 app.get("/", (req, res) => {

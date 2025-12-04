@@ -11,7 +11,7 @@ router.get("/login", adminController.loginPage);
 // Login Submit
 router.post("/loginsubmit", adminController.login);
 // Dashboard (protected route)
-router.get("/dashboard", auth, adminController.dashboard);
+router.get("/dashboard", auth, adminController.dashboard).name("admin.dashboard");
 router.get("/admin-profile", auth, adminController.admin_profile);
 router.get("/logout", auth, adminController.logout);
 router.post("/profile/update", auth, upload.single("profile_image"), adminController.update_profile);

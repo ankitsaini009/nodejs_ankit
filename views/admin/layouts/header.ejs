@@ -53,8 +53,8 @@
               <li class="nav-item dropdown header-profile">
                 <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
                   <a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
-                    <% if (admin && admin.profile_img) { %>
-                      <img src="/uploads/<%= admin.profile_img %>" width="35" height="35" class="rounded-circle"
+                    <% if (user && user.profile_img) { %>
+                      <img src="/uploads/<%= user.profile_img %>" width="35" height="35" class="rounded-circle"
                         alt="User">
                       <% } else { %>
                         <img src="/images/profile/pic1.jpg" width="20" alt="" />

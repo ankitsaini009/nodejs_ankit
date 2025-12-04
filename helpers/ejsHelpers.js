@@ -1,5 +1,3 @@
-module.exports = {
-  getAdmin: function (session) {
-    return session.admin || null;
-  }
+module.exports = function (name, params = {}) {
+  return global.app.namedRoutes.build(name, params);
 };
